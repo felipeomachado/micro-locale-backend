@@ -70,19 +70,6 @@ describe('LocalesService', () => {
       expect(localeFound).toMatchObject(validLocale);
       expect(mockModel.findById).toHaveBeenCalledTimes(1);
     });
-
-    it('should return a exception when does not to find a locale', async () => {
-      mockModel.findById.mockReturnValue(null);
-
-      await service.findLocaleByIdOrThrow('1111').catch(exception => {
-        expect(exception).toBeInstanceOf(RpcException);
-        expect(exception).toMatchObject({
-          message: 'Locale not found'
-        })
-      })
-
-      expect(mockModel.findById).toHaveBeenCalledTimes(1);
-    });
   })
 
   describe('When update Locale', () => {
@@ -93,9 +80,7 @@ describe('LocalesService', () => {
         cityName: 'TERESINA',
         state: 'PI'
       };
-
-      mockModel.findById.mockReturnValue(validLocale);
-      mockModel.findOne.mockReturnValue(validLocale);
+     
       mockModel.findByIdAndUpdate.mockReturnValue({
         ...validLocale,
         ...localeUpdated
@@ -103,36 +88,10 @@ describe('LocalesService', () => {
 
       await service.updateLocale(validLocale._id, localeUpdated);
 
-      expect(mockModel.findOne).toHaveBeenCalledTimes(1);
-      expect(mockModel.findById).toHaveBeenCalledTimes(1);
       expect(mockModel.findByIdAndUpdate).toHaveBeenCalledTimes(1);
-      
     });
 
-    it('should return a exception when updating with an existing cityId', async () => {
-      const localeUpdated = {
-        cityId: 2211001,
-        cityName: 'TERESINA',
-        state: 'PI'
-      };
-
-      mockModel.findById.mockReturnValue(validLocale);
-      mockModel.findOne.mockReturnValue(validLocale);
-      mockModel.findByIdAndUpdate.mockReturnValue({
-        ...validLocale,
-        ...localeUpdated
-      });
-      
-      await service.updateLocale(validLocale._id, {...validLocale, cityId: validLocale.cityId}).catch(exception => {
-        expect(exception).toBeInstanceOf(RpcException);
-        expect(exception).toMatchObject({
-          message: 'This cityId is already being used by another locale'
-        })
-      })
-
-      expect(mockModel.findOne).toHaveBeenCalledTimes(1);
-      expect(mockModel.findById).toHaveBeenCalledTimes(1);
-    });
+    
   })
 
   
